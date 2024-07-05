@@ -2,8 +2,7 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 
-mapboxgl.accessToken =
-  "pk.eyJ1IjoiYWlkYW5tdXJyYXkiLCJhIjoiY2x5N3BldnRtMDF4ejJrcXd4YnZtaHAycSJ9.7rTiY9kqsc8gmO2Y95QpNg";
+mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
 const MapComponent = ({ postcodes }) => {
   const [geojsonData, setGeojsonData] = useState(null);
@@ -11,10 +10,18 @@ const MapComponent = ({ postcodes }) => {
   const mapRef = useRef(null);
 
   const fetchGeojsonData = async () => {
+    if (!postcodes) {
+      setGeojsonData(null);
+      return;
+    }
+
     try {
       const response = await fetch(
-        `http://localhost:3003/geojson/${postcodes}`
+        `${process.env.REACT_APP_API_URL}/geojson/${postcodes}`
       );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
       const data = await response.json();
       setGeojsonData(data);
     } catch (error) {
@@ -24,11 +31,9 @@ const MapComponent = ({ postcodes }) => {
 
   useEffect(() => {
     fetchGeojsonData();
-  }, []);
+  }, [postcodes]);
 
   useEffect(() => {
-    if (!geojsonData) return;
-
     if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
@@ -38,24 +43,39 @@ const MapComponent = ({ postcodes }) => {
       });
 
       mapRef.current.on("load", () => {
-        updateMap();
+        if (geojsonData) {
+          updateMap();
+        }
       });
     } else {
       updateMap();
     }
 
     function updateMap() {
-      const filteredData = {
-        ...geojsonData,
-        features: geojsonData.features.filter((feature) =>
-          postcodes
-            .split(",")
-            .map((code) => code.trim())
-            .includes(feature.properties.name)
-        ),
-      };
+      if (!geojsonData) {
+        if (mapRef.current.getLayer("polygon-layer")) {
+          mapRef.current.removeLayer("polygon-layer");
+        }
+        if (mapRef.current.getLayer("outline")) {
+          mapRef.current.removeLayer("outline");
+        }
+        if (mapRef.current.getSource("polygon")) {
+          mapRef.current.removeSource("polygon");
+        }
+        return;
+      }
 
-      console.log("Filtered Data:", filteredData);
+      const filteredData = {
+        type: "FeatureCollection",
+        features: geojsonData.map((item) => ({
+          type: "Feature",
+          properties: {
+            name: item.name,
+            description: item.description,
+          },
+          geometry: JSON.parse(item.geojson),
+        })),
+      };
 
       if (mapRef.current.getSource("polygon")) {
         mapRef.current.getSource("polygon").setData(filteredData);
@@ -89,14 +109,13 @@ const MapComponent = ({ postcodes }) => {
       }
     }
 
-    // Clean up the map instance on component unmount
     return () => {
       if (mapRef.current) {
         mapRef.current.remove();
         mapRef.current = null;
       }
     };
-  }, [geojsonData, postcodes]); // Run this effect when geojsonData or postcodes change
+  }, [geojsonData]);
 
   return <div className="map-container" ref={mapContainerRef} />;
 };

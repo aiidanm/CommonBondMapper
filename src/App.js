@@ -14,7 +14,8 @@ function App() {
   return (
     <div className="app-container">
       <div className="centered-box">
-        <h1 className="mainName">SCU Common bond map</h1>
+        <h1 className="mainName">Common bond map</h1>
+        <h3>by Aidan Murray</h3>
         <input
           type="text"
           value={postcodes}
