@@ -10,25 +10,30 @@ const MapComponent = ({ postcodes }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
 
-  const fetchGeojsonData = () => {
-    fetch("/M.geojson")
-      .then((response) => response.json())
-      .then((data) => setGeojsonData(data))
-      .catch((error) => console.error("Error fetching GeoJSON data:", error));
+  const fetchGeojsonData = async () => {
+    try {
+      const response = await fetch(
+        `http://localhost:3003/geojson/${postcodes}`
+      );
+      const data = await response.json();
+      setGeojsonData(data);
+    } catch (error) {
+      console.error("Error fetching GeoJSON data:", error);
+    }
   };
 
   useEffect(() => {
     fetchGeojsonData();
-  }, []); 
+  }, []);
 
   useEffect(() => {
-    if (!geojsonData) return; 
+    if (!geojsonData) return;
 
     if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
-        center: [-2.24409, 53.48305], 
+        center: [-2.24409, 53.48305],
         zoom: 12,
       });
 
