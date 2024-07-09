@@ -26,7 +26,7 @@ function App() {
           value={postcodes}
           onChange={(e) => setPostcodes(e.target.value.toUpperCase())}
         ></input>
-        <input type="color" onChange={(e) => handleColorUpdate(e)}></input>
+        <input className="colorPicker" type="color" onChange={(e) => handleColorUpdate(e)}></input>
         <button onClick={handleUpdateMap}>Update Map</button>
         <div className="postcodeinput"></div>
         <MapComponent postcodes={filteredPostcodes} selectedcolor={selectedcolor}/>

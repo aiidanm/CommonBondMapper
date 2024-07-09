@@ -141,7 +141,7 @@ const MapComponent = ({ postcodes,selectedcolor }) => {
         mapRef.current = null;
       }
     };
-  }, [geojsonData]);
+  }, [geojsonData,selectedcolor]);
 
   return <>
   <div className="map-container" ref={mapContainerRef} />
