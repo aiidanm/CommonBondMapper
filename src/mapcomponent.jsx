@@ -1,13 +1,29 @@
 // src/MapComponent.js
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
+import * as turf from '@turf/turf';
+import {geojson2svg} from "geojson2svg"
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-const MapComponent = ({ postcodes }) => {
+const MapComponent = ({ postcodes,selectedcolor }) => {
   const [geojsonData, setGeojsonData] = useState(null);
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
+  const [svgString, setSvgString] = useState("")
+  const [layerData, setLayerData] = useState(null)
+
+  // const converter = new geojson2svg({
+  //   mapExtent: {left: -180, bottom: -90, right: 180, top: 90},
+  //   viewportSize: {width: 200, height: 100},
+  //   attributes: ['properties.class' , 'properties.foo'],
+  //   r: 2
+  // });
+
+  // const handleSVG = () => {
+    
+  //   setSvgString(converter.convert(filteredData))
+  // }
 
   const fetchGeojsonData = async () => {
     if (!postcodes) {
@@ -33,6 +49,10 @@ const MapComponent = ({ postcodes }) => {
     fetchGeojsonData();
   }, [postcodes]);
 
+   
+  
+ 
+
   useEffect(() => {
     if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
@@ -52,6 +72,7 @@ const MapComponent = ({ postcodes }) => {
     }
 
     function updateMap() {
+      
       if (!geojsonData) {
         if (mapRef.current.getLayer("polygon-layer")) {
           mapRef.current.removeLayer("polygon-layer");
@@ -65,6 +86,7 @@ const MapComponent = ({ postcodes }) => {
         return;
       }
 
+
       const filteredData = {
         type: "FeatureCollection",
         features: geojsonData.map((item) => ({
@@ -76,6 +98,8 @@ const MapComponent = ({ postcodes }) => {
           geometry: JSON.parse(item.geojson),
         })),
       };
+
+        
 
       if (mapRef.current.getSource("polygon")) {
         mapRef.current.getSource("polygon").setData(filteredData);
@@ -91,7 +115,7 @@ const MapComponent = ({ postcodes }) => {
           source: "polygon",
           layout: {},
           paint: {
-            "fill-color": "#d15ac9",
+            "fill-color": `${selectedcolor}`,
             "fill-opacity": 0.5,
           },
         });
@@ -106,6 +130,8 @@ const MapComponent = ({ postcodes }) => {
             "line-width": 2,
           },
         });
+        var bbox1 = turf.bbox(filteredData)
+        mapRef.current.fitBounds(bbox1, {padding: 20})
       }
     }
 
@@ -117,7 +143,10 @@ const MapComponent = ({ postcodes }) => {
     };
   }, [geojsonData]);
 
-  return <div className="map-container" ref={mapContainerRef} />;
+  return <>
+  <div className="map-container" ref={mapContainerRef} />
+  {/* <button onClick={handleSVG}>Export layer as SVG</button> */}
+  </>;
 };
 
 export default MapComponent;

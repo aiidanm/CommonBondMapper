@@ -6,10 +6,15 @@ import MapComponent from "./mapcomponent";
 function App() {
   const [postcodes, setPostcodes] = useState("");
     const [filteredPostcodes, setFilteredPostcodes] = useState("");
+    const [selectedcolor, setSelectedColor] = useState("#ff3399")
 
    const handleUpdateMap = () => {
      setFilteredPostcodes(postcodes);
    };
+
+   const handleColorUpdate = (e) => {
+    setSelectedColor(e.target.value)
+   }
 
   return (
     <div className="app-container">
@@ -19,11 +24,12 @@ function App() {
         <input
           type="text"
           value={postcodes}
-          onChange={(e) => setPostcodes(e.target.value)}
+          onChange={(e) => setPostcodes(e.target.value.toUpperCase())}
         ></input>
+        <input type="color" onChange={(e) => handleColorUpdate(e)}></input>
         <button onClick={handleUpdateMap}>Update Map</button>
         <div className="postcodeinput"></div>
-        <MapComponent postcodes={filteredPostcodes}/>
+        <MapComponent postcodes={filteredPostcodes} selectedcolor={selectedcolor}/>
       </div>
     </div>
   );
