@@ -74,3 +74,61 @@ html,
   height: 100vh; /* Full screen height */
 }
 
+
+.colorPicker{
+  border-radius: 5px;
+  height: 40px;
+  width: 100%;
+  outline: none;
+  -webkit-appearance: none;
+  border: 2px solid black;
+}
+
+.colorPicker::-webkit-color-swatch-wrapper {
+  padding: 0; 
+}
+.colorPicker::-webkit-color-swatch {
+  border: none;
+  border-radius: 0%;
+}
+
+.controlsContainer {
+  display: flex;
+  flex-direction: column;
+}
+
+.button {
+  background-color: #3d9de6;
+  color: white;
+  border-radius: 5px;
+  min-height: 10%;
+  min-width: 80%;
+  margin: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.button:hover {
+  background-color: #218ee1; /* Darker shade of the pink color */
+  transform: scale(1.05); /* Slightly increase the size */
+  cursor: pointer; /* Change cursor to pointer */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+}
+
+.howtoButton {
+  background-color: #3d9de6;
+  color: white;
+  border-radius: 5px;
+  min-height: 5%;
+  min-width: 40%;
+  margin: 5px;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.howtoButton:hover {
+  background-color: #218ee1; /* Darker shade of the pink color */
+  transform: scale(1.05); /* Slightly increase the size */
+  cursor: pointer; /* Change cursor to pointer */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+}
+
+

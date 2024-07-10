@@ -7,7 +7,7 @@ import Modal from "./popup";
 function App() {
   const [postcodes, setPostcodes] = useState("");
   const [filteredPostcodes, setFilteredPostcodes] = useState("");
-  const [selectedcolor, setSelectedColor] = useState("#ff3399");
+  const [selectedcolor, setSelectedColor] = useState("#3d9de6");
   const [triggerUpdate, setTriggerUpdate] = useState(0);
   const [opacity, setOpacity] = useState(0.5);
   const [openHowTo, setOpenHowTo] = useState(false);
@@ -22,7 +22,7 @@ function App() {
   };
 
   const handleOpacity = (e) => {
-    setOpacity(Number(e.target.value) / 10);
+    setOpacity(Number(e.target.value) / 100);
   };
 
   
@@ -30,15 +30,11 @@ function App() {
   return (
     <div className="app-container">
       <div className="centered-box">
-        <h1 className="mainName">Common bond map</h1>
+        <div className="controlsContainer"><h1 className="mainName">Common bond map</h1>
         <h3>by Aidan Murray</h3>
-        <button onClick={() => setOpenHowTo(true)}>How to use</button>
+        <button onClick={() => setOpenHowTo(true)} className="howtoButton">How to use</button>
         <Modal isOpen={openHowTo} onClose={() => setOpenHowTo(false)}></Modal>
-        <input
-          type="text"
-          value={postcodes}
-          onChange={(e) => setPostcodes(e.target.value.toUpperCase())}
-        />
+        
         <input
           className="colorPicker"
           type="color"
@@ -49,11 +45,18 @@ function App() {
           type="range"
           id="opacity"
           min={0}
-          max={10}
+          max={100}
           onChange={handleOpacity}
         ></input>
-        <label htmlFor="opacity">Opacity</label>
-        <button onClick={handleUpdateMap}>Update Map</button>
+        <label htmlFor="opacity">Opacity: {opacity * 100}%</label>
+        <input
+          type="text"
+          value={postcodes}
+          onChange={(e) => setPostcodes(e.target.value.toUpperCase())}
+          placeholder="M1,M2,M3,...."
+        />
+        <button onClick={handleUpdateMap} className="button">Update Map</button></div>
+       
         <MapComponent
           postcodes={filteredPostcodes}
           selectedcolor={selectedcolor}
