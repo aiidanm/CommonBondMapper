@@ -2,6 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import React, { useState } from "react";
 import MapComponent from "./mapcomponent";
+import Modal from "./popup";
 
 function App() {
   const [postcodes, setPostcodes] = useState("");
@@ -9,6 +10,7 @@ function App() {
   const [selectedcolor, setSelectedColor] = useState("#ff3399");
   const [triggerUpdate, setTriggerUpdate] = useState(0);
   const [opacity, setOpacity] = useState(0.5);
+  const [openHowTo, setOpenHowTo] = useState(false);
 
   const handleUpdateMap = () => {
     setFilteredPostcodes(postcodes);
@@ -23,11 +25,15 @@ function App() {
     setOpacity(Number(e.target.value) / 10);
   };
 
+  
+
   return (
     <div className="app-container">
       <div className="centered-box">
         <h1 className="mainName">Common bond map</h1>
         <h3>by Aidan Murray</h3>
+        <button onClick={() => setOpenHowTo(true)}>How to use</button>
+        <Modal isOpen={openHowTo} onClose={() => setOpenHowTo(false)}></Modal>
         <input
           type="text"
           value={postcodes}

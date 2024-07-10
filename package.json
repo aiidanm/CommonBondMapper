@@ -1,7 +1,7 @@
 {
   "name": "postcodemapper",
   "version": "0.1.0",
-  "private": true,
+  "private": false,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
@@ -14,6 +14,7 @@
     "react-dom": "^18.3.1",
     "react-map-gl": "^7.1.7",
     "react-scripts": "5.0.1",
+    "styled-components": "^6.1.11",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

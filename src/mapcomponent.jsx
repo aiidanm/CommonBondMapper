@@ -10,6 +10,8 @@ const MapComponent = ({ postcodes, selectedcolor, triggerUpdate, opacity }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
 
+  
+
   const fetchGeojsonData = async () => {
     if (!postcodes) {
       setGeojsonData(null);
@@ -141,6 +143,9 @@ const MapComponent = ({ postcodes, selectedcolor, triggerUpdate, opacity }) => {
       );
     }
 
+
+    
+
     return () => {
       if (mapRef.current) {
         mapRef.current.remove();
@@ -150,9 +155,7 @@ const MapComponent = ({ postcodes, selectedcolor, triggerUpdate, opacity }) => {
   }, [filteredData, triggerUpdate]);
 
   return (
-    <>
       <div className="map-container" ref={mapContainerRef} />
-    </>
   );
 };
 
