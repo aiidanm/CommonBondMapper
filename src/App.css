@@ -108,10 +108,10 @@ html,
 }
 
 .button:hover {
-  background-color: #218ee1; /* Darker shade of the pink color */
-  transform: scale(1.05); /* Slightly increase the size */
-  cursor: pointer; /* Change cursor to pointer */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  background-color: #218ee1; 
+  transform: scale(1.05); 
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .howtoButton {
@@ -125,10 +125,10 @@ html,
 }
 
 .howtoButton:hover {
-  background-color: #218ee1; /* Darker shade of the pink color */
-  transform: scale(1.05); /* Slightly increase the size */
-  cursor: pointer; /* Change cursor to pointer */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow */
+  background-color: #218ee1; 
+  transform: scale(1.05); 
+  cursor: pointer; 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
 }
 
 
