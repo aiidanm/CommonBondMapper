@@ -1,48 +1,10 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+/* General Styles */
 body,
 html,
 #root {
   height: 100%;
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: "Roboto", sans-serif; /* Updated font for a more modern look */
 }
 
 .app-container {
@@ -50,85 +12,187 @@ html,
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-color: #f0f0f0;
+  background-color: #f8f9fa; /* Lighter background color */
+  padding: 20px; /* Added padding for better spacing */
 }
 
 .centered-box {
   background-color: white;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 30px; /* Increased padding for better spacing */
+  border-radius: 10px; /* Slightly larger border radius for smoother corners */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
-  max-width: 1500px; /* Max width for phone screen size */
-  height: 100%;
-  max-height: 1500px; /* Max height for phone screen size */
+  max-width: 1200px;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  margin: 20px 0; /* Added margin to ensure it's not off the screen */
 }
 
 .map-container {
   width: 100%;
-  height: 100vh; /* Full screen height */
+  height: 70vh; /* Adjusted height to fit better with other elements */
+  margin-top: 20px; /* Added margin to separate from the top elements */
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-
-.colorPicker{
+/* Input Styles */
+input[type="text"],
+input[type="color"],
+input[type="range"] {
+  flex: 1;
+  padding: 10px;
+  margin: 10px;
   border-radius: 5px;
-  height: 40px;
-  width: 100%;
+  border: 1px solid #ccc;
+  font-size: 1rem;
   outline: none;
-  -webkit-appearance: none;
-  border: 2px solid black;
+  transition: border-color 0.3s ease;
 }
 
-.colorPicker::-webkit-color-swatch-wrapper {
-  padding: 0; 
-}
-.colorPicker::-webkit-color-swatch {
-  border: none;
-  border-radius: 0%;
+input[type="text"]:focus,
+input[type="color"]:focus,
+input[type="range"]:focus {
+  border-color: #3d9de6;
 }
 
-.controlsContainer {
-  display: flex;
-  flex-direction: column;
-}
-
-.button {
-  background-color: #3d9de6;
-  color: white;
-  border-radius: 5px;
-  min-height: 10%;
-  min-width: 80%;
-  margin: 5px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-}
-
-.button:hover {
-  background-color: #218ee1; 
-  transform: scale(1.05); 
-  cursor: pointer;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
+/* Button Styles */
+.button,
 .howtoButton {
   background-color: #3d9de6;
   color: white;
+  border: none;
   border-radius: 5px;
-  min-height: 5%;
-  min-width: 40%;
-  margin: 5px;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
+  margin: 10px; /* Ensure consistent spacing */
 }
 
+.button:hover,
 .howtoButton:hover {
-  background-color: #218ee1; 
-  transform: scale(1.05); 
-  cursor: pointer; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); 
+  background-color: #218ee1;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
+/* Typography */
+.mainName {
+  font-size: 2.5rem;
+  color: #333;
+  margin-bottom: 10px;
+}
 
+h3 {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* Controls Container */
+.controlsContainer {
+  display: flex;
+  flex-wrap: nowrap; /* Prevent wrapping on larger screens */
+  justify-content: space-between;
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 20px;
+  border: 2px solid #103c5e;
+  border-radius: 5px;
+  padding: 5px;
+}
+
+label {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #666;
+}
+
+.opacityContainer {
+  display: flex;
+  flex-direction: column;
+  border-left: 2px solid #103c5e;
+  border-right: 2px solid #103c5e;
+  padding-left: 5px;
+  align-items: center; /* Center items vertically */
+}
+
+.colorPickerContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center items vertically */
+}
+
+/* Responsive Layout */
+@media (max-width: 767px) {
+  .controlsContainer {
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .map-container {
+    height: 50vh; /* Adjust map height on smaller screens */
+  }
+
+  .opacityContainer {
+    display: flex;
+    flex-direction: column;
+    border-left: none;
+    border-right: none;
+    border-top: 2px solid #103c5e;
+    border-bottom: 2px solid #103c5e;
+    width: 100%;
+    padding: 10px 0;
+    align-items: center; /* Center items vertically */
+  }
+
+  .colorPickerContainer {
+    width: 100%;
+    padding: 10px 0;
+    align-items: center; /* Center items vertically */
+    height: fit-content;
+  }
+
+  .colorPickerContainer input[type="color"] {
+    width: 100px;
+    height: 50px;
+  }
+
+  .controlsContainer input[type="text"] {
+    width: calc(100% - 20px); /* Ensure it fits within the container */
+    margin: 10px;
+  }
+
+  .button {
+    width: calc(100% - 20px); /* Ensure it fits within the container */
+    margin: 10px;
+  }
+}
+
+#style1 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100px;
+  height: 50px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0px;
+  padding: 0px;
+}
+#style1::-webkit-color-swatch {
+  border-radius: 10px;
+  border: none;
+}
+#style1::-moz-color-swatch {
+  border-radius: 10px;
+  border: none;
+}

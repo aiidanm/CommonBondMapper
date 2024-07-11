@@ -25,38 +25,49 @@ function App() {
     setOpacity(Number(e.target.value) / 100);
   };
 
-  
-
   return (
     <div className="app-container">
       <div className="centered-box">
-        <div className="controlsContainer"><h1 className="mainName">Common bond map</h1>
+        <h1 className="mainName">Postcode Plotter</h1>
         <h3>by Aidan Murray</h3>
-        <button onClick={() => setOpenHowTo(true)} className="howtoButton">How to use</button>
-        <Modal isOpen={openHowTo} onClose={() => setOpenHowTo(false)}></Modal>
-        
-        <input
-          className="colorPicker"
-          type="color"
-          value={selectedcolor}
-          onChange={handleColorUpdate}
-        />
-        <input
-          type="range"
-          id="opacity"
-          min={0}
-          max={100}
-          onChange={handleOpacity}
-        ></input>
-        <label htmlFor="opacity">Opacity: {opacity * 100}%</label>
-        <input
-          type="text"
-          value={postcodes}
-          onChange={(e) => setPostcodes(e.target.value.toUpperCase())}
-          placeholder="M1,M2,M3,...."
-        />
-        <button onClick={handleUpdateMap} className="button">Update Map</button></div>
-       
+        <button onClick={() => setOpenHowTo(true)} className="howtoButton">
+          How to use
+        </button>
+        <div className="controlsContainer">
+          <Modal isOpen={openHowTo} onClose={() => setOpenHowTo(false)}></Modal>
+          <div className="colorPickerContainer">
+            <input
+              id="style1"
+              type="color"
+              value={selectedcolor}
+              onChange={handleColorUpdate}
+            />
+            <label htmlFor="style1">Pick your colour</label>
+          </div>
+
+          <div className="opacityContainer">
+            <input
+              type="range"
+              id="opacity"
+              min={0}
+              max={100}
+              onChange={handleOpacity}
+            ></input>
+            <label htmlFor="opacity">
+              Opacity: {Math.round(opacity * 100)}%
+            </label>
+          </div>
+          <input
+            type="text"
+            value={postcodes}
+            onChange={(e) => setPostcodes(e.target.value.toUpperCase())}
+            placeholder="M1,M2,M3,...."
+          />
+          <button onClick={handleUpdateMap} className="button">
+            Update Map
+          </button>
+        </div>
+
         <MapComponent
           postcodes={filteredPostcodes}
           selectedcolor={selectedcolor}
