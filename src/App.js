@@ -6,15 +6,50 @@ import Modal from "./popup";
 
 function App() {
   const [postcodes, setPostcodes] = useState("");
-  const [filteredPostcodes, setFilteredPostcodes] = useState("");
+  const [layerName, setLayerName] = useState(""); // New state for layer name
+  const [layers, setLayers] = useState([]); // New state for layers
   const [selectedcolor, setSelectedColor] = useState("#3d9de6");
-  const [triggerUpdate, setTriggerUpdate] = useState(0);
   const [opacity, setOpacity] = useState(0.5);
   const [openHowTo, setOpenHowTo] = useState(false);
 
-  const handleUpdateMap = () => {
-    setFilteredPostcodes(postcodes);
-    setTriggerUpdate((prev) => prev + 1); // Increment the counter to trigger map update
+  const handleAddLayer = async () => {
+    // Fetch GeoJSON data for the provided postcodes
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_API_URL}/geojson/${postcodes}`
+      );
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const geojsonData = await response.json();
+
+      const newLayer = {
+        name: layerName,
+        geojsonData: {
+          type: "FeatureCollection",
+          features: geojsonData.map((item) => ({
+            type: "Feature",
+            properties: {
+              name: item.name,
+              description: item.description,
+            },
+            geometry: JSON.parse(item.geojson),
+          })),
+        },
+        color: selectedcolor,
+        opacity: opacity,
+      };
+
+      setLayers([...layers, newLayer]);
+      setLayerName("");
+      setPostcodes("");
+    } catch (error) {
+      console.error("Error fetching GeoJSON data:", error);
+    }
+  };
+
+  const handleRemoveLayer = (layerName) => {
+    setLayers(layers.filter((layer) => layer.name !== layerName));
   };
 
   const handleColorUpdate = (e) => {
@@ -28,7 +63,7 @@ function App() {
   return (
     <div className="app-container">
       <div className="centered-box">
-        <h1 className="mainName">Postcode Plotter</h1>
+        <h1 className="mainName">Common bond map</h1>
         <h3>by Aidan Murray</h3>
         <button onClick={() => setOpenHowTo(true)} className="howtoButton">
           How to use
@@ -59,21 +94,22 @@ function App() {
           </div>
           <input
             type="text"
+            value={layerName}
+            onChange={(e) => setLayerName(e.target.value)}
+            placeholder="Layer Name"
+          />
+          <input
+            type="text"
             value={postcodes}
             onChange={(e) => setPostcodes(e.target.value.toUpperCase())}
             placeholder="M1,M2,M3,...."
           />
-          <button onClick={handleUpdateMap} className="button">
+          <button onClick={handleAddLayer} className="button">
             Update Map
           </button>
         </div>
 
-        <MapComponent
-          postcodes={filteredPostcodes}
-          selectedcolor={selectedcolor}
-          triggerUpdate={triggerUpdate}
-          opacity={opacity}
-        />
+        <MapComponent layers={layers} onRemoveLayer={handleRemoveLayer} />
       </div>
     </div>
   );

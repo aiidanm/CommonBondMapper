@@ -4,57 +4,13 @@ import * as turf from "@turf/turf";
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-const MapComponent = ({ postcodes, selectedcolor, triggerUpdate, opacity }) => {
-  const [geojsonData, setGeojsonData] = useState(null);
-  const [filteredData, setFilteredData] = useState(null); // New state for filtered data
+const MapComponent = ({ layers, onRemoveLayer }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-
-  
-
-  const fetchGeojsonData = async () => {
-    if (!postcodes) {
-      setGeojsonData(null);
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/geojson/${postcodes}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      setGeojsonData(data);
-    } catch (error) {
-      console.error("Error fetching GeoJSON data:", error);
-    }
-  };
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
-    fetchGeojsonData();
-  }, [postcodes]);
-
-  useEffect(() => {
-    if (geojsonData) {
-      const filtered = {
-        type: "FeatureCollection",
-        features: geojsonData.map((item) => ({
-          type: "Feature",
-          properties: {
-            name: item.name,
-            description: item.description,
-          },
-          geometry: JSON.parse(item.geojson),
-        })),
-      };
-      setFilteredData(filtered);
-    }
-  }, [geojsonData]);
-
-  useEffect(() => {
-    const initializeMap = () => {
+    if (!mapRef.current) {
       mapRef.current = new mapboxgl.Map({
         container: mapContainerRef.current,
         style: "mapbox://styles/mapbox/streets-v11",
@@ -63,61 +19,41 @@ const MapComponent = ({ postcodes, selectedcolor, triggerUpdate, opacity }) => {
       });
 
       mapRef.current.on("load", () => {
-        if (filteredData) {
-          updateMap(filteredData);
-        }
+        setMapLoaded(true);
       });
-    };
-
-    if (!mapRef.current) {
-      initializeMap();
-    } else if (filteredData) {
-      updateMap(filteredData);
     }
+  }, []);
 
-    function updateMap(data) {
-      if (!data) {
-        if (mapRef.current.getLayer("polygon-layer")) {
-          mapRef.current.removeLayer("polygon-layer");
-        }
-        if (mapRef.current.getLayer("outline")) {
-          mapRef.current.removeLayer("outline");
-        }
-        if (mapRef.current.getSource("polygon")) {
-          mapRef.current.removeSource("polygon");
-        }
-        return;
-      }
+  useEffect(() => {
+    if (mapLoaded) {
+      layers.forEach((layer) => {
+        const layerId = `layer-${layer.name}`;
+        const outlineId = `outline-${layer.name}`;
 
-      if (mapRef.current.isStyleLoaded()) {
-        if (mapRef.current.getSource("polygon")) {
-          mapRef.current.getSource("polygon").setData(data);
-          mapRef.current.setPaintProperty(
-            "polygon-layer",
-            "fill-color",
-            selectedcolor
-          );
+        // Check if layer already exists
+        if (mapRef.current.getLayer(layerId)) {
+          mapRef.current.getSource(layerId).setData(layer.geojsonData);
         } else {
-          mapRef.current.addSource("polygon", {
+          mapRef.current.addSource(layerId, {
             type: "geojson",
-            data: data,
+            data: layer.geojsonData,
           });
 
           mapRef.current.addLayer({
-            id: "polygon-layer",
+            id: layerId,
             type: "fill",
-            source: "polygon",
+            source: layerId,
             layout: {},
             paint: {
-              "fill-color": `${selectedcolor}`,
-              "fill-opacity": opacity,
+              "fill-color": layer.color,
+              "fill-opacity": layer.opacity,
             },
           });
 
           mapRef.current.addLayer({
-            id: "outline",
+            id: outlineId,
             type: "line",
-            source: "polygon",
+            source: layerId,
             layout: {},
             paint: {
               "line-color": "#000",
@@ -125,37 +61,50 @@ const MapComponent = ({ postcodes, selectedcolor, triggerUpdate, opacity }) => {
             },
           });
 
-          var bbox1 = turf.bbox(data);
-          mapRef.current.fitBounds(bbox1, { padding: 20 });
+          // Check if geojsonData is defined before using turf.bbox
+          if (
+            layer.geojsonData &&
+            layer.geojsonData.features &&
+            layer.geojsonData.features.length > 0
+          ) {
+            const bbox = turf.bbox(layer.geojsonData);
+            mapRef.current.fitBounds(bbox, { padding: 20 });
+          }
         }
-      } else {
-        mapRef.current.once("styledata", () => {
-          updateMap(data);
-        });
-      }
+      });
+
+      // Remove layers that are not in the state anymore
+      mapRef.current.getStyle().layers.forEach((layer) => {
+        if (
+          layer.id.startsWith("layer-") &&
+          !layers.find((l) => `layer-${l.name}` === layer.id)
+        ) {
+          mapRef.current.removeLayer(layer.id);
+          mapRef.current.removeSource(layer.id);
+        }
+
+        if (
+          layer.id.startsWith("outline-") &&
+          !layers.find((l) => `outline-${l.name}` === layer.id)
+        ) {
+          mapRef.current.removeLayer(layer.id);
+        }
+      });
     }
-
-    if (mapRef.current && filteredData && mapRef.current.isStyleLoaded()) {
-      mapRef.current.setPaintProperty(
-        "polygon-layer",
-        "fill-color",
-        selectedcolor
-      );
-    }
-
-
-    
-
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [filteredData, triggerUpdate]);
+  }, [layers, mapLoaded]);
 
   return (
+    <div>
       <div className="map-container" ref={mapContainerRef} />
+      <div className="layer-list">
+        {layers.map((layer) => (
+          <div key={layer.name} className="layer-item">
+            <span>{layer.name}</span>
+            <button onClick={() => onRemoveLayer(layer.name)}>Remove</button>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };
 
