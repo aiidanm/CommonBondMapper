@@ -33,11 +33,58 @@ html,
 
 .map-container {
   width: 100%;
+   flex-grow: 1; 
   height: 70vh; /* Adjusted height to fit better with other elements */
   margin-top: 20px; /* Added margin to separate from the top elements */
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.bottomContainer {
+ width: 100%;
+}
+
+
+/* Layer List Styles */
+.layer-list {
+  width: 100%;
+  margin-top: 10px;
+}
+
+.layer-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.layer-color-box {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border-radius: 3px;
+  border: 1px solid #000;
+}
+
+.layer-item button {
+  background-color: #d9534f;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
+  margin-left: auto; /* Align the button to the right */
+}
+
+.layer-item button:hover {
+  background-color: #c9302c;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Input Styles */

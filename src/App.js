@@ -13,7 +13,10 @@ function App() {
   const [openHowTo, setOpenHowTo] = useState(false);
 
   const handleAddLayer = async () => {
-    // Fetch GeoJSON data for the provided postcodes
+    if (layers.some((layer) => layer.name === layerName)) {
+      alert("Layer name already exists. Please choose a different name.");
+      return;
+    }
     try {
       const response = await fetch(
         `${process.env.REACT_APP_API_URL}/geojson/${postcodes}`
@@ -49,7 +52,7 @@ function App() {
   };
 
   const handleRemoveLayer = (layerName) => {
-    setLayers(layers.filter((layer) => layer.name !== layerName));
+    setLayers(currLayers => currLayers.filter((layer) => layer.name !== layerName))
   };
 
   const handleColorUpdate = (e) => {

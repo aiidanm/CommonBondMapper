@@ -74,7 +74,8 @@ const MapComponent = ({ layers, onRemoveLayer }) => {
       });
 
       // Remove layers that are not in the state anymore
-      mapRef.current.getStyle().layers.forEach((layer) => {
+      const existingLayers = mapRef.current.getStyle().layers;
+      existingLayers.forEach((layer) => {
         if (
           layer.id.startsWith("layer-") &&
           !layers.find((l) => `layer-${l.name}` === layer.id)
@@ -93,14 +94,37 @@ const MapComponent = ({ layers, onRemoveLayer }) => {
     }
   }, [layers, mapLoaded]);
 
+  const handleRemoveLayer = (layerName) => {
+    const layerId = `layer-${layerName}`;
+    const outlineId = `outline-${layerName}`;
+
+    if (mapRef.current.getLayer(outlineId)) {
+      mapRef.current.removeLayer(outlineId);
+    }
+
+    if (mapRef.current.getLayer(layerId)) {
+      mapRef.current.removeLayer(layerId);
+      mapRef.current.removeSource(layerId);
+    }
+
+    onRemoveLayer(layerName);
+  };
+
   return (
-    <div>
+    <div className="bottomContainer">
       <div className="map-container" ref={mapContainerRef} />
       <div className="layer-list">
         {layers.map((layer) => (
           <div key={layer.name} className="layer-item">
+            <span
+              className="layer-color-box"
+              style={{ backgroundColor: layer.color }}
+            ></span>
             <span>{layer.name}</span>
-            <button onClick={() => onRemoveLayer(layer.name)}>Remove</button>
+            <button onClick={() => handleRemoveLayer(layer.name)}>
+              Remove
+            </button>
+            <div className="colorSwatch"></div>
           </div>
         ))}
       </div>
