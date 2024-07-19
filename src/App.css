@@ -243,3 +243,27 @@ label {
   border-radius: 10px;
   border: none;
 }
+
+
+#style2 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0px;
+  padding: 0px;
+}
+#style2::-webkit-color-swatch {
+  border-radius: 10px;
+  border: none;
+}
+#style2::-moz-color-swatch {
+  border-radius: 10px;
+  border: none;
+}
+
+

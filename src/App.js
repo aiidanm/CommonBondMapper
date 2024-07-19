@@ -1,4 +1,3 @@
-import logo from "./logo.svg";
 import "./App.css";
 import React, { useState } from "react";
 import MapComponent from "./mapcomponent";
@@ -12,32 +11,40 @@ function App() {
   const [opacity, setOpacity] = useState(0.5);
   const [openHowTo, setOpenHowTo] = useState(false);
 
+  const fetchGeojsonData = async (postcodes) => {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL}/geojson/${postcodes}`
+    );
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const geojsonData = await response.json();
+    return geojsonData.map((item) => ({
+      type: "Feature",
+      properties: {
+        name: item.name,
+        description: item.description,
+      },
+      geometry: JSON.parse(item.geojson),
+    }));
+  };
+
   const handleAddLayer = async () => {
-    if (layers.some((layer) => layer.name === layerName)) {
+    // Check for duplicate layer name
+    if (layers.some(layer => layer.name === layerName)) {
       alert("Layer name already exists. Please choose a different name.");
       return;
     }
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/geojson/${postcodes}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const geojsonData = await response.json();
 
+    // Fetch GeoJSON data for the provided postcodes
+    try {
+      const features = await fetchGeojsonData(postcodes);
       const newLayer = {
         name: layerName,
+        postcodes: postcodes,
         geojsonData: {
           type: "FeatureCollection",
-          features: geojsonData.map((item) => ({
-            type: "Feature",
-            properties: {
-              name: item.name,
-              description: item.description,
-            },
-            geometry: JSON.parse(item.geojson),
-          })),
+          features,
         },
         color: selectedcolor,
         opacity: opacity,
@@ -51,8 +58,31 @@ function App() {
     }
   };
 
+  const handleUpdateLayer = async (layerName) => {
+    const layerIndex = layers.findIndex(layer => layer.name === layerName);
+    if (layerIndex === -1) return;
+
+    try {
+      const features = await fetchGeojsonData(layers[layerIndex].postcodes);
+      const updatedLayer = {
+        ...layers[layerIndex],
+        geojsonData: {
+          type: "FeatureCollection",
+          features,
+        },
+        
+      };
+
+      const updatedLayers = [...layers];
+      updatedLayers[layerIndex] = updatedLayer;
+      setLayers(updatedLayers);
+    } catch (error) {
+      console.error("Error fetching GeoJSON data:", error);
+    }
+  };
+
   const handleRemoveLayer = (layerName) => {
-    setLayers(currLayers => currLayers.filter((layer) => layer.name !== layerName))
+    setLayers(layers.filter(layer => layer.name !== layerName));
   };
 
   const handleColorUpdate = (e) => {
@@ -61,6 +91,13 @@ function App() {
 
   const handleOpacity = (e) => {
     setOpacity(Number(e.target.value) / 100);
+  };
+
+  const handlePostcodesChange = (layerName, newPostcodes) => {
+    const updatedLayers = layers.map(layer =>
+      layer.name === layerName ? { ...layer, postcodes: newPostcodes } : layer
+    );
+    setLayers(updatedLayers);
   };
 
   return (
@@ -91,9 +128,7 @@ function App() {
               max={100}
               onChange={handleOpacity}
             ></input>
-            <label htmlFor="opacity">
-              Opacity: {Math.round(opacity * 100)}%
-            </label>
+            <label htmlFor="opacity">Opacity: {Math.round(opacity * 100)}%</label>
           </div>
           <input
             type="text"
@@ -108,11 +143,16 @@ function App() {
             placeholder="M1,M2,M3,...."
           />
           <button onClick={handleAddLayer} className="button">
-            Update Map
+            Add Layer
           </button>
         </div>
 
-        <MapComponent layers={layers} onRemoveLayer={handleRemoveLayer} />
+        <MapComponent
+          layers={layers}
+          onRemoveLayer={handleRemoveLayer}
+          onUpdateLayer={handleUpdateLayer}
+          onPostcodesChange={handlePostcodesChange}
+        />
       </div>
     </div>
   );

@@ -1,10 +1,24 @@
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
 import * as turf from "@turf/turf";
+import 'mapbox-gl/dist/mapbox-gl.css';
+	import {
+		MapboxExportControl,
+		Size,
+		PageOrientation,
+		Format,
+		DPI
+	} from '@watergis/mapbox-gl-export';
+	import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-const MapComponent = ({ layers, onRemoveLayer }) => {
+const MapComponent = ({
+  layers,
+  onRemoveLayer,
+  onUpdateLayer,
+  onPostcodesChange,
+}) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
   const [mapLoaded, setMapLoaded] = useState(false);
@@ -20,6 +34,18 @@ const MapComponent = ({ layers, onRemoveLayer }) => {
 
       mapRef.current.on("load", () => {
         setMapLoaded(true);
+        mapRef.current.addControl(
+          new MapboxExportControl({
+            PageSize: Size.A3,
+            PageOrientation: PageOrientation.Portrait,
+            Format: Format.PNG,
+            DPI: DPI[96],
+            Crosshair: true,
+            PrintableArea: true,
+            Local: 'en'
+          }),
+          'top-right'
+        );
       });
     }
   }, []);
@@ -110,10 +136,17 @@ const MapComponent = ({ layers, onRemoveLayer }) => {
     onRemoveLayer(layerName);
   };
 
+  const handlePostcodesChange = (layerName, newPostcodes) => {
+    onPostcodesChange(layerName, newPostcodes);
+  };
+
   return (
     <div className="bottomContainer">
       <div className="map-container" ref={mapContainerRef} />
       <div className="layer-list">
+        <a id="downloadLink" href={imageDownloadUrl} download="map.png">
+          Download ↓
+        </a>
         {layers.map((layer) => (
           <div key={layer.name} className="layer-item">
             <span
@@ -121,10 +154,17 @@ const MapComponent = ({ layers, onRemoveLayer }) => {
               style={{ backgroundColor: layer.color }}
             ></span>
             <span>{layer.name}</span>
+            <input
+              type="text"
+              value={layer.postcodes}
+              onChange={(e) =>
+                handlePostcodesChange(layer.name, e.target.value)
+              }
+            />
+            <button onClick={() => onUpdateLayer(layer.name)}>Update</button>
             <button onClick={() => handleRemoveLayer(layer.name)}>
               Remove
             </button>
-            <div className="colorSwatch"></div>
           </div>
         ))}
       </div>
