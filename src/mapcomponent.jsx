@@ -144,9 +144,7 @@ const MapComponent = ({
     <div className="bottomContainer">
       <div className="map-container" ref={mapContainerRef} />
       <div className="layer-list">
-        <a id="downloadLink" href={imageDownloadUrl} download="map.png">
-          Download ↓
-        </a>
+       
         {layers.map((layer) => (
           <div key={layer.name} className="layer-item">
             <span
