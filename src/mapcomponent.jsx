@@ -156,7 +156,7 @@ const MapComponent = ({
               type="text"
               value={layer.postcodes}
               onChange={(e) =>
-                handlePostcodesChange(layer.name, e.target.value)
+                handlePostcodesChange(layer.name, e.target.value.toUpperCase())
               }
             />
             <button onClick={() => onUpdateLayer(layer.name)}>Update</button>
