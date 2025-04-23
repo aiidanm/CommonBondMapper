@@ -10,6 +10,7 @@ function App() {
   const [selectedcolor, setSelectedColor] = useState("#3d9de6");
   const [opacity, setOpacity] = useState(0.5);
   const [openHowTo, setOpenHowTo] = useState(false);
+  const [outlineColor, setOutlineColor] = useState("#FF0000")
 
   const fetchGeojsonData = async (postcodes) => {
     const response = await fetch(
@@ -30,13 +31,11 @@ function App() {
   };
 
   const handleAddLayer = async () => {
-    // Check for duplicate layer name
     if (layers.some(layer => layer.name === layerName)) {
       alert("Layer name already exists. Please choose a different name.");
       return;
     }
 
-    // Fetch GeoJSON data for the provided postcodes
     try {
       const features = await fetchGeojsonData(postcodes);
       const newLayer = {
@@ -48,6 +47,7 @@ function App() {
         },
         color: selectedcolor,
         opacity: opacity,
+        lineColor: outlineColor
       };
 
       setLayers([...layers, newLayer]);

@@ -18,6 +18,7 @@ const MapComponent = ({
   onRemoveLayer,
   onUpdateLayer,
   onPostcodesChange,
+  
 }) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
@@ -56,7 +57,6 @@ const MapComponent = ({
         const layerId = `layer-${layer.name}`;
         const outlineId = `outline-${layer.name}`;
 
-        // Check if layer already exists
         if (mapRef.current.getLayer(layerId)) {
           mapRef.current.getSource(layerId).setData(layer.geojsonData);
         } else {
@@ -82,7 +82,7 @@ const MapComponent = ({
             source: layerId,
             layout: {},
             paint: {
-              "line-color": "#000",
+              "line-color": "#FF0000",
               "line-width": 2,
             },
           });
