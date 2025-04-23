@@ -4,22 +4,24 @@ html,
 #root {
   height: 100%;
   margin: 0;
-  font-family: "Roboto", sans-serif; /* Updated font for a more modern look */
+  font-family: "Roboto", sans-serif;
 }
 
+/* Layout Containers */
 .app-container {
   display: flex;
   justify-content: center;
-  align-items: center;
-  height: 100%;
-  background-color: #f8f9fa; /* Lighter background color */
-  padding: 20px; /* Added padding for better spacing */
+  align-items: flex-start; 
+  min-height: 100vh; 
+  background-color: #f8f9fa;
+  padding: 20px;
+  box-sizing: border-box; 
 }
 
 .centered-box {
   background-color: white;
-  padding: 30px; /* Increased padding for better spacing */
-  border-radius: 10px; /* Slightly larger border radius for smoother corners */
+  padding: 30px;
+  border-radius: 10px;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 1200px;
@@ -28,25 +30,58 @@ html,
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  margin: 20px 0; /* Added margin to ensure it's not off the screen */
+  margin: 20px 0;
 }
 
+.bottomContainer {
+  width: 100%;
+}
+
+/* Map */
 .map-container {
   width: 100%;
-   flex-grow: 1; 
-  height: 70vh; /* Adjusted height to fit better with other elements */
-  margin-top: 20px; /* Added margin to separate from the top elements */
+  flex-grow: 1;
+  height: 70vh;
+  margin-top: 20px;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
 }
 
-.bottomContainer {
- width: 100%;
+/* Controls Container */
+.controlsContainer {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center; /* Vertically align items */
+  width: 100%;
+  max-width: 1000px;
+  margin-bottom: 20px;
+  border: 2px solid #103c5e;
+  border-radius: 5px;
+  padding: 5px;
 }
 
+.colorPickerContainer,
+.opacityContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0 5px; /* Add horizontal padding */
+  justify-content: space-evenly;
+}
 
-/* Layer List Styles */
+.colorpicker{
+  display: flex;
+  flex-direction: column;
+}
+
+.opacityContainer {
+  border-left: 2px solid #103c5e;
+  border-right: 2px solid #103c5e;
+}
+
+/* Layer List */
 .layer-list {
   width: 100%;
   margin-top: 10px;
@@ -55,10 +90,20 @@ html,
 .layer-item {
   display: flex;
   align-items: center;
+  flex-wrap: wrap; /* Important: Allows items to wrap */
+  gap: 8px;       /* Adds consistent spacing between items, even when wrapped */
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   margin-bottom: 10px;
+}
+
+.layer-item input[type="text"] {
+  flex-grow: 1;      /* Allows it to take up available space on the line */
+  flex-shrink: 1;    /* Allows it to shrink if needed */
+  min-width: 150px;  /* Prevent it from becoming too small before wrapping */
+                     /* Adjust this value as needed */
+  margin: 0;         /* Reset margin if you're using 'gap' on the parent */
 }
 
 .layer-color-box {
@@ -69,29 +114,10 @@ html,
   border: 1px solid #000;
 }
 
-.layer-item button {
-  background-color: #d9534f;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  padding: 5px 10px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease;
-  margin-left: auto; /* Align the button to the right */
-}
-
-.layer-item button:hover {
-  background-color: #c9302c;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-/* Input Styles */
+/* Inputs */
 input[type="text"],
 input[type="color"],
 input[type="range"] {
-  flex: 1;
   padding: 10px;
   margin: 10px;
   border-radius: 5px;
@@ -101,13 +127,41 @@ input[type="range"] {
   transition: border-color 0.3s ease;
 }
 
+input[type="text"] {
+  flex: 1; /* Allow text inputs to grow */
+}
+
 input[type="text"]:focus,
 input[type="color"]:focus,
 input[type="range"]:focus {
   border-color: #3d9de6;
 }
 
-/* Button Styles */
+/* Specific Color Input Style (#style1 used in App.js) */
+#style1 {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  width: 100px; /* Keep specific size */
+  height: 50px; /* Keep specific size */
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  margin: 0; /* Reset margin */
+  padding: 0; /* Reset padding */
+}
+
+#style1::-webkit-color-swatch {
+  border-radius: 10px;
+  border: none;
+}
+
+#style1::-moz-color-swatch {
+  border-radius: 10px;
+  border: none;
+}
+
+/* Buttons */
 .button,
 .howtoButton {
   background-color: #3d9de6;
@@ -119,12 +173,31 @@ input[type="range"]:focus {
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.3s ease,
     box-shadow 0.3s ease;
-  margin: 10px; /* Ensure consistent spacing */
+  margin: 10px;
 }
 
 .button:hover,
 .howtoButton:hover {
   background-color: #218ee1;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Specific Layer Item Button */
+.layer-item button {
+  background-color: #d9534f; /* Distinct color for remove */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px; /* Smaller padding */
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
+  margin-left: auto; /* Pushes button to the right */
+}
+
+.layer-item button:hover {
+  background-color: #c9302c;
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -142,128 +215,65 @@ h3 {
   margin-bottom: 20px;
 }
 
-/* Controls Container */
-.controlsContainer {
-  display: flex;
-  flex-wrap: nowrap; /* Prevent wrapping on larger screens */
-  justify-content: space-between;
-  width: 100%;
-  max-width: 1000px;
-  margin-bottom: 20px;
-  border: 2px solid #103c5e;
-  border-radius: 5px;
-  padding: 5px;
-}
-
 label {
   margin-top: 10px;
   font-size: 1rem;
   color: #666;
 }
 
-.opacityContainer {
-  display: flex;
-  flex-direction: column;
-  border-left: 2px solid #103c5e;
-  border-right: 2px solid #103c5e;
-  padding-left: 5px;
-  align-items: center; /* Center items vertically */
-}
-
-.colorPickerContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center; /* Center items vertically */
-}
-
 /* Responsive Layout */
 @media (max-width: 767px) {
   .controlsContainer {
-    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    flex-wrap: wrap;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch; /* Stretch items to full width */
+    padding: 10px; /* Add padding inside border */
   }
 
   .map-container {
-    height: 50vh; /* Adjust map height on smaller screens */
+    height: 50vh;
   }
 
   .opacityContainer {
-    display: flex;
-    flex-direction: column;
     border-left: none;
     border-right: none;
     border-top: 2px solid #103c5e;
     border-bottom: 2px solid #103c5e;
     width: 100%;
     padding: 10px 0;
-    align-items: center; /* Center items vertically */
+    margin: 10px 0; /* Add vertical margin */
+    box-sizing: border-box; /* Include padding/border in width */
   }
 
   .colorPickerContainer {
     width: 100%;
     padding: 10px 0;
-    align-items: center; /* Center items vertically */
-    height: fit-content;
+    height: auto; /* Changed from fit-content */
   }
 
+  /* Ensure inputs/buttons take appropriate width within flex column */
+  .controlsContainer input[type="text"],
+  .controlsContainer .button,
+  .controlsContainer .howtoButton {
+    width: calc(100% - 20px); /* Account for margin */
+    margin: 10px;
+    box-sizing: border-box;
+  }
+
+  /* Center color picker elements */
   .colorPickerContainer input[type="color"] {
-    width: 100px;
-    height: 50px;
+    margin-bottom: 5px; /* Space between picker and label */
+  }
+  .colorPickerContainer label {
+    margin-top: 0; /* Reset top margin for label */
   }
 
-  .controlsContainer input[type="text"] {
-    width: calc(100% - 20px); /* Ensure it fits within the container */
-    margin: 10px;
+  /* Ensure opacity slider elements are centered */
+  .opacityContainer input[type="range"] {
+    width: 80%; /* Make slider wider */
+    margin-bottom: 5px;
   }
-
-  .button {
-    width: calc(100% - 20px); /* Ensure it fits within the container */
-    margin: 10px;
+  .opacityContainer label {
+    margin-top: 0;
   }
 }
-
-#style1 {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 100px;
-  height: 50px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  margin: 0px;
-  padding: 0px;
-}
-#style1::-webkit-color-swatch {
-  border-radius: 10px;
-  border: none;
-}
-#style1::-moz-color-swatch {
-  border-radius: 10px;
-  border: none;
-}
-
-
-#style2 {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-  margin: 0px;
-  padding: 0px;
-}
-#style2::-webkit-color-swatch {
-  border-radius: 10px;
-  border: none;
-}
-#style2::-moz-color-swatch {
-  border-radius: 10px;
-  border: none;
-}
-
-

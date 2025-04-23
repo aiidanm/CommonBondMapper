@@ -10,7 +10,7 @@ function App() {
   const [selectedcolor, setSelectedColor] = useState("#3d9de6");
   const [opacity, setOpacity] = useState(0.5);
   const [openHowTo, setOpenHowTo] = useState(false);
-  const [outlineColor, setOutlineColor] = useState("#FF0000")
+  const [outlineColor, setOutlineColor] = useState("#FF0000");
 
   const fetchGeojsonData = async (postcodes) => {
     const response = await fetch(
@@ -31,7 +31,7 @@ function App() {
   };
 
   const handleAddLayer = async () => {
-    if (layers.some(layer => layer.name === layerName)) {
+    if (layers.some((layer) => layer.name === layerName)) {
       alert("Layer name already exists. Please choose a different name.");
       return;
     }
@@ -47,7 +47,7 @@ function App() {
         },
         color: selectedcolor,
         opacity: opacity,
-        lineColor: outlineColor
+        lineColor: outlineColor,
       };
 
       setLayers([...layers, newLayer]);
@@ -59,7 +59,7 @@ function App() {
   };
 
   const handleUpdateLayer = async (layerName) => {
-    const layerIndex = layers.findIndex(layer => layer.name === layerName);
+    const layerIndex = layers.findIndex((layer) => layer.name === layerName);
     if (layerIndex === -1) return;
 
     try {
@@ -70,7 +70,6 @@ function App() {
           type: "FeatureCollection",
           features,
         },
-        
       };
 
       const updatedLayers = [...layers];
@@ -82,11 +81,15 @@ function App() {
   };
 
   const handleRemoveLayer = (layerName) => {
-    setLayers(layers.filter(layer => layer.name !== layerName));
+    setLayers(layers.filter((layer) => layer.name !== layerName));
   };
 
   const handleColorUpdate = (e) => {
     setSelectedColor(e.target.value);
+  };
+
+  const handleOutlineColorUpdate = (e) => {
+    setOutlineColor(e.target.value);
   };
 
   const handleOpacity = (e) => {
@@ -94,7 +97,7 @@ function App() {
   };
 
   const handlePostcodesChange = (layerName, newPostcodes) => {
-    const updatedLayers = layers.map(layer =>
+    const updatedLayers = layers.map((layer) =>
       layer.name === layerName ? { ...layer, postcodes: newPostcodes } : layer
     );
     setLayers(updatedLayers);
@@ -111,13 +114,24 @@ function App() {
         <div className="controlsContainer">
           <Modal isOpen={openHowTo} onClose={() => setOpenHowTo(false)}></Modal>
           <div className="colorPickerContainer">
-            <input
-              id="style1"
-              type="color"
-              value={selectedcolor}
-              onChange={handleColorUpdate}
-            />
-            <label htmlFor="style1">Pick your colour</label>
+            <div className="colorpicker">
+              <input
+                id="style1"
+                type="color"
+                value={selectedcolor}
+                onChange={handleColorUpdate}
+              />
+              <label htmlFor="style1">Fill Colour</label>
+            </div>
+            <div className="colorpicker">
+              <input
+                id="style1"
+                type="color"
+                value={outlineColor}
+                onChange={handleOutlineColorUpdate}
+              />
+              <label htmlFor="style1">Outline Colour</label>
+            </div>
           </div>
 
           <div className="opacityContainer">
@@ -128,7 +142,9 @@ function App() {
               max={100}
               onChange={handleOpacity}
             ></input>
-            <label htmlFor="opacity">Opacity: {Math.round(opacity * 100)}%</label>
+            <label htmlFor="opacity">
+              Opacity: {Math.round(opacity * 100)}%
+            </label>
           </div>
           <input
             type="text"

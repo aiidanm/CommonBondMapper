@@ -82,7 +82,7 @@ const MapComponent = ({
             source: layerId,
             layout: {},
             paint: {
-              "line-color": "#FF0000",
+              "line-color": layer.lineColor,
               "line-width": 2,
             },
           });
