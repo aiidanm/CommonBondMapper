@@ -10,7 +10,7 @@ function App() {
   const [selectedcolor, setSelectedColor] = useState("#3d9de6");
   const [opacity, setOpacity] = useState(0.5);
   const [openHowTo, setOpenHowTo] = useState(false);
-  const [outlineColor, setOutlineColor] = useState("#FF0000");
+  const [outlineColor, setOutlineColor] = useState("#000000");
 
   const fetchGeojsonData = async (postcodes) => {
     const response = await fetch(
