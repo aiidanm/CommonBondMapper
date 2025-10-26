@@ -1,57 +1,28 @@
-// src/MapComponent.js
 import React, { useRef, useEffect, useState } from "react";
 import mapboxgl from "mapbox-gl";
-import * as turf from '@turf/turf';
-import {geojson2svg} from "geojson2svg"
+import * as turf from "@turf/turf";
+import 'mapbox-gl/dist/mapbox-gl.css';
+	import {
+		MapboxExportControl,
+		Size,
+		PageOrientation,
+		Format,
+		DPI
+	} from '@watergis/mapbox-gl-export';
+	import '@watergis/mapbox-gl-export/dist/mapbox-gl-export.css';
 
 mapboxgl.accessToken = process.env.REACT_APP_MAPBOX_ACCESS_TOKEN;
 
-const MapComponent = ({ postcodes,selectedcolor }) => {
-  const [geojsonData, setGeojsonData] = useState(null);
+const MapComponent = ({
+  layers,
+  onRemoveLayer,
+  onUpdateLayer,
+  onPostcodesChange,
+  
+}) => {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const [svgString, setSvgString] = useState("")
-  const [layerData, setLayerData] = useState(null)
-
-  // const converter = new geojson2svg({
-  //   mapExtent: {left: -180, bottom: -90, right: 180, top: 90},
-  //   viewportSize: {width: 200, height: 100},
-  //   attributes: ['properties.class' , 'properties.foo'],
-  //   r: 2
-  // });
-
-  // const handleSVG = () => {
-    
-  //   setSvgString(converter.convert(filteredData))
-  // }
-
-  const fetchGeojsonData = async () => {
-    if (!postcodes) {
-      setGeojsonData(null);
-      return;
-    }
-
-    try {
-      const response = await fetch(
-        `${process.env.REACT_APP_API_URL}/geojson/${postcodes}`
-      );
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-      const data = await response.json();
-      setGeojsonData(data);
-    } catch (error) {
-      console.error("Error fetching GeoJSON data:", error);
-    }
-  };
-
-  useEffect(() => {
-    fetchGeojsonData();
-  }, [postcodes]);
-
-   
-  
- 
+  const [mapLoaded, setMapLoaded] = useState(false);
 
   useEffect(() => {
     if (!mapRef.current) {
@@ -63,90 +34,140 @@ const MapComponent = ({ postcodes,selectedcolor }) => {
       });
 
       mapRef.current.on("load", () => {
-        if (geojsonData) {
-          updateMap();
+        setMapLoaded(true);
+        mapRef.current.addControl(
+          new MapboxExportControl({
+            PageSize: Size.A3,
+            PageOrientation: PageOrientation.Portrait,
+            Format: Format.PNG,
+            DPI: DPI[96],
+            Crosshair: true,
+            PrintableArea: true,
+            Local: 'en'
+          }),
+          'top-right'
+        );
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mapLoaded) {
+      layers.forEach((layer) => {
+        const layerId = `layer-${layer.name}`;
+        const outlineId = `outline-${layer.name}`;
+
+        if (mapRef.current.getLayer(layerId)) {
+          mapRef.current.getSource(layerId).setData(layer.geojsonData);
+        } else {
+          mapRef.current.addSource(layerId, {
+            type: "geojson",
+            data: layer.geojsonData,
+          });
+
+          mapRef.current.addLayer({
+            id: layerId,
+            type: "fill",
+            source: layerId,
+            layout: {},
+            paint: {
+              "fill-color": layer.color,
+              "fill-opacity": layer.opacity,
+            },
+          });
+
+          mapRef.current.addLayer({
+            id: outlineId,
+            type: "line",
+            source: layerId,
+            layout: {},
+            paint: {
+              "line-color": layer.lineColor,
+              "line-width": 2,
+            },
+          });
+
+          // Check if geojsonData is defined before using turf.bbox
+          if (
+            layer.geojsonData &&
+            layer.geojsonData.features &&
+            layer.geojsonData.features.length > 0
+          ) {
+            const bbox = turf.bbox(layer.geojsonData);
+            mapRef.current.fitBounds(bbox, { padding: 20 });
+          }
         }
       });
-    } else {
-      updateMap();
+
+      // Remove layers that are not in the state anymore
+      const existingLayers = mapRef.current.getStyle().layers;
+      existingLayers.forEach((layer) => {
+        if (
+          layer.id.startsWith("layer-") &&
+          !layers.find((l) => `layer-${l.name}` === layer.id)
+        ) {
+          mapRef.current.removeLayer(layer.id);
+          mapRef.current.removeSource(layer.id);
+        }
+
+        if (
+          layer.id.startsWith("outline-") &&
+          !layers.find((l) => `outline-${l.name}` === layer.id)
+        ) {
+          mapRef.current.removeLayer(layer.id);
+        }
+      });
+    }
+  }, [layers, mapLoaded]);
+
+  const handleRemoveLayer = (layerName) => {
+    const layerId = `layer-${layerName}`;
+    const outlineId = `outline-${layerName}`;
+
+    if (mapRef.current.getLayer(outlineId)) {
+      mapRef.current.removeLayer(outlineId);
     }
 
-    function updateMap() {
-      
-      if (!geojsonData) {
-        if (mapRef.current.getLayer("polygon-layer")) {
-          mapRef.current.removeLayer("polygon-layer");
-        }
-        if (mapRef.current.getLayer("outline")) {
-          mapRef.current.removeLayer("outline");
-        }
-        if (mapRef.current.getSource("polygon")) {
-          mapRef.current.removeSource("polygon");
-        }
-        return;
-      }
-
-
-      const filteredData = {
-        type: "FeatureCollection",
-        features: geojsonData.map((item) => ({
-          type: "Feature",
-          properties: {
-            name: item.name,
-            description: item.description,
-          },
-          geometry: JSON.parse(item.geojson),
-        })),
-      };
-
-        
-
-      if (mapRef.current.getSource("polygon")) {
-        mapRef.current.getSource("polygon").setData(filteredData);
-      } else {
-        mapRef.current.addSource("polygon", {
-          type: "geojson",
-          data: filteredData,
-        });
-
-        mapRef.current.addLayer({
-          id: "polygon-layer",
-          type: "fill",
-          source: "polygon",
-          layout: {},
-          paint: {
-            "fill-color": `${selectedcolor}`,
-            "fill-opacity": 0.5,
-          },
-        });
-
-        mapRef.current.addLayer({
-          id: "outline",
-          type: "line",
-          source: "polygon",
-          layout: {},
-          paint: {
-            "line-color": "#000",
-            "line-width": 2,
-          },
-        });
-        var bbox1 = turf.bbox(filteredData)
-        mapRef.current.fitBounds(bbox1, {padding: 20})
-      }
+    if (mapRef.current.getLayer(layerId)) {
+      mapRef.current.removeLayer(layerId);
+      mapRef.current.removeSource(layerId);
     }
 
-    return () => {
-      if (mapRef.current) {
-        mapRef.current.remove();
-        mapRef.current = null;
-      }
-    };
-  }, [geojsonData,selectedcolor]);
+    onRemoveLayer(layerName);
+  };
 
-  return <>
-  <div className="map-container" ref={mapContainerRef} />
-  {/* <button onClick={handleSVG}>Export layer as SVG</button> */}
-  </>;
+  const handlePostcodesChange = (layerName, newPostcodes) => {
+    onPostcodesChange(layerName, newPostcodes);
+  };
+
+  return (
+    <div className="bottomContainer">
+      <div className="map-container" ref={mapContainerRef} />
+      <div className="layer-list">
+       
+        {layers.map((layer) => (
+          <div key={layer.name} className="layer-item">
+            <span
+              className="layer-color-box"
+              style={{ backgroundColor: layer.color }}
+            ></span>
+            <span>{layer.name}</span>
+            <input
+              type="text"
+              value={layer.postcodes}
+              onChange={(e) =>
+                handlePostcodesChange(layer.name, e.target.value.toUpperCase())
+              }
+            />
+            <button onClick={() => onUpdateLayer(layer.name)}>Update</button>
+            <button onClick={() => handleRemoveLayer(layer.name)}>
+              Remove
+            </button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default MapComponent;
