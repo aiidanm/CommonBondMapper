@@ -1,288 +1,346 @@
+/* Variables */
+:root {
+  --primary-color: #2B6CB0;
+  --secondary-color: #4299E1;
+  --accent-color: #63B3ED;
+  --background-color: #F7FAFC;
+  --surface-color: #FFFFFF;
+  --text-primary: #2D3748;
+  --text-secondary: #4A5568;
+  --border-color: #E2E8F0;
+  --success-color: #48BB78;
+  --error-color: #F56565;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  --sidebar-width: 370px;
+  --sidebar-toggle-width: 30px;
+}
+
 /* General Styles */
 body,
 html,
 #root {
   height: 100%;
   margin: 0;
-  font-family: "Roboto", sans-serif;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  color: var(--text-primary);
 }
 
 /* Layout Containers */
 .app-container {
-  display: flex;
-  justify-content: center;
-  align-items: flex-start; 
-  min-height: 100vh; 
-  background-color: #f8f9fa;
-  padding: 20px;
-  box-sizing: border-box; 
-}
-
-.centered-box {
-  background-color: white;
-  padding: 30px;
-  border-radius: 10px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 1200px;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
-  margin: 20px 0;
-}
-
-.bottomContainer {
-  width: 100%;
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
 }
 
 /* Map */
 .map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
-  flex-grow: 1;
-  height: 70vh;
-  margin-top: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  z-index: 1;
+}
+
+/* Sidebar */
+.sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: calc(var(--sidebar-width) + var(--sidebar-toggle-width));
+  z-index: 2;
+  display: flex;
+  transform: translateX(calc(-1 * var(--sidebar-width)));
+  transition: transform 0.3s ease;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar-content {
+  width: var(--sidebar-width);
+  height: 100%;
+  background: var(--surface-color);
+  box-shadow: var(--shadow-lg);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar-toggle {
+  width: var(--sidebar-toggle-width);
+  background: var(--surface-color);
+  border-left: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  transition: background-color 0.2s ease;
+  box-shadow: var(--shadow-md);
+}
+
+.sidebar-toggle:hover {
+  background-color: var(--background-color);
+}
+
+/* Header */
+.sidebar-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.mainName {
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -moz-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 0 0.5rem;
+}
+
+h3 {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin: 0 0 1rem;
+  font-weight: 400;
 }
 
 /* Controls Container */
 .controlsContainer {
+  padding: 1.5rem;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: space-evenly;
-  align-items: center; /* Vertically align items */
-  width: 100%;
-  max-width: 1300px;
-  margin-bottom: 20px;
-  border: 2px solid #103c5e;
-  border-radius: 5px;
-  padding: 5px;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
 }
 
-.colorPickerContainer{
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  padding: 0 10px; /* Add horizontal padding */
-  justify-content: space-evenly;
+.controls-section {
+  background: var(--background-color);
+  border-radius: 8px;
+  padding: 1.25rem;
 }
 
+.colorPickerContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
 
-.opacityContainer {
+.colorpicker {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 0 10px; /* Add horizontal padding */
-  justify-content: space-evenly;
-}
-
-.colorpicker{
-  display: flex;
-  flex-direction: column;
-margin: 10px;
-}
-
-.opacityContainer {
-  border-left: 2px solid #103c5e;
-  border-right: 2px solid #103c5e;
-}
-
-/* Layer List */
-.layer-list {
-  width: 100%;
-  margin-top: 10px;
-}
-
-.layer-item {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap; /* Important: Allows items to wrap */
-  gap: 8px;       /* Adds consistent spacing between items, even when wrapped */
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-bottom: 10px;
-}
-
-.layer-item input[type="text"] {
-  flex-grow: 1;      /* Allows it to take up available space on the line */
-  flex-shrink: 1;    /* Allows it to shrink if needed */
-  min-width: 150px;  /* Prevent it from becoming too small before wrapping */
-                     /* Adjust this value as needed */
-  margin: 0;         /* Reset margin if you're using 'gap' on the parent */
-}
-
-.layer-color-box {
-  width: 20px;
-  height: 20px;
-  margin-right: 10px;
-  border-radius: 3px;
-  border: 1px solid #000;
+  gap: 0.5rem;
 }
 
 /* Inputs */
 input[type="text"],
 input[type="color"],
 input[type="range"] {
-  padding: 10px;
-  margin: 10px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  font-size: 0.95rem;
   outline: none;
-  transition: border-color 0.3s ease;
-}
-
-input[type="text"] {
-  flex: 1; /* Allow text inputs to grow */
+  transition: all 0.2s ease;
+  background: var(--surface-color);
 }
 
 input[type="text"]:focus,
 input[type="color"]:focus,
 input[type="range"]:focus {
-  border-color: #3d9de6;
+  border-color: var(--secondary-color);
+  box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
 }
 
-/* Specific Color Input Style (#style1 used in App.js) */
-#style1 {
+.style1 {
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  width: 100px; /* Keep specific size */
-  height: 50px; /* Keep specific size */
-  background-color: transparent;
+  width: 50px;
+  height: 50px;
+  padding: 0;
   border: none;
+  border-radius: 8px;
   cursor: pointer;
-  margin: 0; /* Reset margin */
-  padding: 0; /* Reset padding */
+  box-shadow: var(--shadow-sm);
 }
 
-#style1::-webkit-color-swatch {
-  border-radius: 10px;
-  border: none;
+.style1::-webkit-color-swatch-wrapper {
+  padding: 0;
 }
 
-#style1::-moz-color-swatch {
-  border-radius: 10px;
-  border: none;
+.style1::-webkit-color-swatch {
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+}
+
+/* Range Input */
+input[type="range"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 3px;
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  background: var(--secondary-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  transform: scale(1.1);
 }
 
 /* Buttons */
 .button,
 .howtoButton {
-  background-color: #3d9de6;
+  background: var(--gradient-primary);
   color: white;
   border: none;
-  border-radius: 5px;
-  padding: 10px 20px;
-  font-size: 1rem;
+  border-radius: 6px;
+  padding: 0.75rem 1.25rem;
+  font-size: 0.95rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease;
-  margin: 10px;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .button:hover,
 .howtoButton:hover {
-  background-color: #218ee1;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  filter: brightness(110%);
+  transform: translateY(-1px);
 }
 
-/* Specific Layer Item Button */
-.layer-item button {
-  background-color: #d9534f; /* Distinct color for remove */
+/* Layer List */
+.layer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.layer-item {
+  background: var(--surface-color);
+  border-radius: 6px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border: 1px solid var(--border-color);
+}
+
+.layer-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.layer-color-box {
+  width: 24px;
+  height: 24px;
+  border-radius: 4px;
+  border: 2px solid var(--border-color);
+  flex-shrink: 0;
+}
+
+.layer-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.layer-controls input[type="text"] {
+  flex: 1;
+}
+
+.layer-controls button {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-radius: 4px;
+  background: var(--accent-color);
   color: white;
   border: none;
-  border-radius: 5px;
-  padding: 5px 10px; /* Smaller padding */
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease,
-    box-shadow 0.3s ease;
-  margin-left: auto; /* Pushes button to the right */
+  transition: all 0.2s ease;
 }
 
-.layer-item button:hover {
-  background-color: #c9302c;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.layer-controls button:last-child {
+  background-color: var(--error-color);
 }
 
-/* Typography */
-.mainName {
-  font-size: 2.5rem;
-  color: #333;
-  margin-bottom: 10px;
+.layer-controls button:hover {
+  filter: brightness(110%);
+  transform: translateY(-1px);
 }
 
-h3 {
-  font-size: 1.2rem;
-  color: #666;
-  margin-bottom: 20px;
-}
-
-label {
-  margin-top: 10px;
-  font-size: 1rem;
-  color: #666;
-}
-
-/* Responsive Layout */
+/* Mobile Responsive */
 @media (max-width: 767px) {
-  .controlsContainer {
-    flex-wrap: wrap;
-    flex-direction: column;
-    align-items: stretch; /* Stretch items to full width */
-    padding: 10px; /* Add padding inside border */
-  }
-
-  .map-container {
-    height: 50vh;
-  }
-
-  .opacityContainer {
-    border-left: none;
-    border-right: none;
-    border-top: 2px solid #103c5e;
-    border-bottom: 2px solid #103c5e;
+  .sidebar {
     width: 100%;
-    padding: 10px 0;
-    margin: 10px 0; /* Add vertical margin */
-    box-sizing: border-box; /* Include padding/border in width */
+    transform: translateX(-100%);
+  }
+
+  .sidebar-content {
+    width: calc(100% - var(--sidebar-toggle-width));
+  }
+
+  .sidebar-toggle {
+    position: fixed;
+    right: 0;
+    width: var(--sidebar-toggle-width);
+    height: 50px;
+    top: 50%;
+    transform: translateY(-50%);
+    border-radius: 0 8px 8px 0;
   }
 
   .colorPickerContainer {
+    grid-template-columns: 1fr;
+  }
+
+  .layer-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .layer-controls button {
     width: 100%;
-    padding: 10px 0;
-    height: auto; /* Changed from fit-content */
   }
 
-  /* Ensure inputs/buttons take appropriate width within flex column */
-  .controlsContainer input[type="text"],
-  .controlsContainer .button,
-  .controlsContainer .howtoButton {
-    width: calc(100% - 20px); /* Account for margin */
-    margin: 10px;
-    box-sizing: border-box;
+  .input-group {
+    width: 100%;
   }
+}
 
-  /* Center color picker elements */
-  .colorPickerContainer input[type="color"] {
-    margin-bottom: 5px; /* Space between picker and label */
-  }
-  .colorPickerContainer label {
-    margin-top: 0; /* Reset top margin for label */
-  }
-
-  /* Ensure opacity slider elements are centered */
-  .opacityContainer input[type="range"] {
-    width: 80%; /* Make slider wider */
-    margin-bottom: 5px;
-  }
-  .opacityContainer label {
-    margin-top: 0;
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

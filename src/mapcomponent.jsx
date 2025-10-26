@@ -141,32 +141,7 @@ const MapComponent = ({
   };
 
   return (
-    <div className="bottomContainer">
-      <div className="map-container" ref={mapContainerRef} />
-      <div className="layer-list">
-       
-        {layers.map((layer) => (
-          <div key={layer.name} className="layer-item">
-            <span
-              className="layer-color-box"
-              style={{ backgroundColor: layer.color }}
-            ></span>
-            <span>{layer.name}</span>
-            <input
-              type="text"
-              value={layer.postcodes}
-              onChange={(e) =>
-                handlePostcodesChange(layer.name, e.target.value.toUpperCase())
-              }
-            />
-            <button onClick={() => onUpdateLayer(layer.name)}>Update</button>
-            <button onClick={() => handleRemoveLayer(layer.name)}>
-              Remove
-            </button>
-          </div>
-        ))}
-      </div>
-    </div>
+    <div className="map-container" ref={mapContainerRef} />
   );
 };
 

@@ -1,0 +1,58 @@
+.postcode-mapper {
+  /* Variables */
+  --primary-color: #2B6CB0;
+  --secondary-color: #4299E1;
+  --accent-color: #63B3ED;
+  --background-color: #F7FAFC;
+  --surface-color: #FFFFFF;
+  --text-primary: #2D3748;
+  --text-secondary: #4A5568;
+  --border-color: #E2E8F0;
+  --success-color: #48BB78;
+  --error-color: #F56565;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+  --gradient-primary: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+  --sidebar-width: 370px;
+  --sidebar-toggle-width: 30px;
+
+  /* Reset styles within the component */
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.postcode-mapper .app-container {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+  color: var(--text-primary);
+}
+
+.postcode-mapper .map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.postcode-mapper .sidebar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: calc(var(--sidebar-width) + var(--sidebar-toggle-width));
+  z-index: 2;
+  display: flex;
+  transform: translateX(calc(-1 * var(--sidebar-width)));
+  transition: transform 0.3s ease;
+}
+
+/* Continue with all other styles, adding .postcode-mapper prefix to each selector */
